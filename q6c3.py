@@ -72,7 +72,7 @@ def main():
         plt.contourf(x, y, vec, bound, cmap='seismic')
         plt.colorbar()
         plt.xlim(-1., 1.)
-        plt.ylim(-0.5, 0.5)
+        plt.ylim(-1, 1)
         plt.savefig('q6c-{}.pdf'.format(i))
         plt.close()
 
