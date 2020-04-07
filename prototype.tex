@@ -66,8 +66,101 @@
 Let $\iu = \sqrt{-1}$, $o(\cdot)$ and $O(\cdot)$ are little-o and big-O notations, respectively, and $\mathbb{N}$ is the set of natural numbers ($\mathbb{N} = \set{0,\ 1,\ 2,\ 3,\ \ldots}$) and $\mathbb{N}_+ = \mathbb{N}\setminus\set{0}$
 
 \begin{enumerate}[1.]
-  \item 
- 
+  \item Set $\hbar = 1$.
+  \begin{enumerate}[(i)]
+    \item Analytically, when $x_0 = 0$ and $p_0 = 0$,
+    \begin{align*}
+      \ev{x^2} &= \qty(\frac{\alpha}{\pi})^{1/2}\int_{-\infty}^{\infty} \dd{x}x^2 e^{-\alpha x^2} 
+      = \qty(\frac{\alpha}{\pi} \frac{\pi}{4\alpha^3})^{1/2}
+      = \frac{1}{{2\alpha}},
+      \ev{x} = \qty(\frac{\alpha}{\pi})^{1/2}\int_{-\infty}^{\infty} \dd{x}x e^{-\alpha x^2} 
+      = 0.
+    \end{align*}
+    When $\alpha = 1$, $\Delta x = \sqrt{\ev{x^2} - \ev{x}^2} = 1/\sqrt{2} \approx 0.70710678$.
+  
+    Use the grid basis in the range $[-20,\ 20]$ and the number of grid points be 1024, and results are:
+    \begin{quotation}
+      norm: $1.00000000$; $\ev{x}$: $0.00000000$; and $\Delta x$: $0.70710678$.
+    \end{quotation}
+    The wavefunction is plotted in Figure~\ref{fig:1-1}.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.6\linewidth]{q1-1.pdf}
+      \caption{}
+      \label{fig:1-1}
+    \end{figure}
+
+    \item Analytically, when $x_0 = 0$ and $p_0 = 0$, the fourier transformation gives
+    \begin{align*}
+      \Psi_0(p) &= \frac{1}{\sqrt{2 \pi }} \int \dd{x} e^{-\iu px} \Psi_0(x)
+      =\frac{1}{\sqrt{2 \pi }} \qty(\frac{\alpha}{\pi})^{1/4}  \int \dd{x} e^{-\iu px -\alpha x^2/2}\\
+      &= \frac{1}{\sqrt{\alpha}} \qty(\frac{\alpha}{\pi})^{1/4}  e^{-{p^2}/(2\alpha)},
+    \end{align*}
+    and when $\alpha = 1$, 
+    \begin{align*}
+      \Psi_0(p)
+      &=  \qty(\frac{1}{\pi})^{1/4}  e^{-{p^2}/{2}},
+    \end{align*}
+    Hence, follow the same procedure we will find that $\ev{p} = 0$, $\ev{p^2} = 1/2$ and $\Delta{p} = 1/\sqrt{2} \approx 0.70710678$.
+  
+    Use the grid basis in the range $[-20,\ 20]$ and the number of grid points be 1024 and 1025, and results are:
+    \begin{quotation}
+      1024 grid points: norm: $1.00000000$; $\ev{p}$: $0.00000000$; and $\Delta p$: $0.70849123$;
+
+      1024 grid points: norm: $1.00000000$; $\ev{p}$: $0.00000000$; and $\Delta p$: $0.70848987$;
+
+      1025 grid points: norm: $1.00000000$; $\ev{p}$: $0.00000000$; and $\Delta p$: $0.70848852$.
+    \end{quotation}
+    The wavefunction is plotted in Figure~\ref{fig:1-2}.
+
+    \begin{figure}[H]
+      \centering
+      \begin{minipage}{0.3\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q1-2-0.pdf}
+        \caption*{1023 grid points}
+      \end{minipage}
+      \begin{minipage}{0.3\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q1-2-1.pdf}
+        \caption*{1024 grid points}
+      \end{minipage}
+      \begin{minipage}{0.3\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q1-2-2.pdf}
+        \caption*{1025 grid points}
+      \end{minipage}
+      \caption{}
+      \label{fig:1-2}
+    \end{figure}
+
+    Note that the relevant errors of $\Delta p$ are larger than the ones of $\Delta x$, and the when the number of grid points is odd the results are more accurate than the case that the number of grid points is similar but is even.
+    This can be also justified the imaginary part of the wavefunction in momentum space
+        
+    \item With 1024 gird points, the answer is 
+    \begin{quotation}
+      Potential: 0.25000000; Kinetic: 0.25097895; Total = 0.50097895.
+    \end{quotation}
+    With $2^{20}$ gird points, the answer is
+    \begin{quotation}
+      Potential: 0.25000000; Kinetic: 0.25000095; Total: 0.50000095.
+    \end{quotation}
+
+    Note that the analytical expectation of the total energy is $0.5$.
+  \end{enumerate}
+  
+  \item \begin{enumerate}[(i)]
+    \item 1
+    \item 2
+    \item 3
+    \item 4
+  \end{enumerate}
+
+  \item \begin{enumerate}[(i)]
+    \item 1
+    \item 2
+    \item 3
+  \end{enumerate}
 \end{enumerate}
 
 \end{document}
