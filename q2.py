@@ -23,7 +23,7 @@ def q2_1(npts, max_iter=1000):
     basis = Coordinate(-20, 20, npts)
     def v_func(x): return 0.5 * x**2
     def t_func(p): return 0.5 * p**2
-    propergator = Propagator(init_wfn, basis, t_func, v_func)
+    propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = 0.1
     zipped = []
     for t, wfn in propergator(dt=dt, max_iter=max_iter):
@@ -75,7 +75,7 @@ def q2_2(npts, max_iter=1000):
     basis = Coordinate(-20, 20, npts)
     def v_func(x): return 8 * (1.0 - np.exp(-x/4))**2
     def t_func(p): return 0.5 * p**2
-    propergator = Propagator(init_wfn, basis, t_func, v_func)
+    propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = 0.1
     zipped = []
     for t, wfn in propergator(dt=dt, max_iter=max_iter):
@@ -112,11 +112,10 @@ def q2_3(npts, max_iter=1000, err=1.0e-14):
     basis = Coordinate(-20, 20, npts)
     def v_func(x): return 8 * (1.0 - np.exp(-x/4))**2
     def t_func(p): return 0.5 * p**2
-    propergator = Propagator(init_wfn, basis, t_func, v_func)
+    propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = -0.1j
     prev_energy = None
-    for t, wfn in propergator(dt=dt, max_iter=max_iter,
-                              renormalization_level=1):
+    for t, wfn in propergator(dt=dt, max_iter=max_iter, renormalize=True):
         potential = basis.inner_product(wfn, op(v_func)(wfn))
         wfn_p = basis.ft(wfn)
         kinetic = basis.conj.inner_product(wfn_p, op(t_func)(wfn_p))
@@ -178,10 +177,9 @@ def q2_4(npts, max_iter=1000):
     def t_func(p): return 0.5 * p ** 2
 
     def _v(x): return v_func(x) + va_func(x)
-    propergator = Propagator(init_wfn, basis, t_func, _v)
+    propergator = Propagator(init_wfn, basis, _v, t_func)
     dt = 0.1
-    for t, wfn in propergator(dt=dt, max_iter=max_iter,
-                              renormalization_level=1):
+    for t, wfn in propergator(dt=dt, max_iter=max_iter, renormalize=True):
         norm = propergator.renormalization_coeff
         print('Time: {:.2f}; Norm: {:.8f}'.format(t, norm))
         plt.plot(basis(), norm * basis(wfn).real, '-', label='Re')
@@ -233,20 +231,20 @@ def plotter(fname, x_range, p_range, e_range, ref=None):
 
 def main():
     npts = 2 ** 12
-    # 2-1
+    ## 2-1
     # q2_1(npts)
     # plotter('q2-1.txt', (-3, 3), (-3, 3), (3.61, 3.63), ref=q2_1a())
 
-    # 2-2
+    ## 2-2
     # q2_2(npts)
     # plotter('q2-2.txt', (-0.25, 0.75), (-0.5, 0.5), (0.53, 0.55))
 
-    # 2-3
-    # q2_3(npts)
-    q2_3dvr(1024)
+    ## 2-3
+    #q2_3(npts)
+    #q2_3dvr(1024)
 
-    # 2-4
-    # q2_4(npts)
+    ## 2-4
+    q2_4(npts)
 
     return
 

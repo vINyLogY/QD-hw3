@@ -65,6 +65,8 @@
 
 Let $\iu = \sqrt{-1}$, $o(\cdot)$ and $O(\cdot)$ are little-o and big-O notations, respectively, and $\mathbb{N}$ is the set of natural numbers ($\mathbb{N} = \set{0,\ 1,\ 2,\ 3,\ \ldots}$) and $\mathbb{N}_+ = \mathbb{N}\setminus\set{0}$
 
+Code available at \url{https://github.com/vINyLogY/QD-hw3}.
+
 \begin{enumerate}[1.]
   \item Set $\hbar = 1$.
   \begin{enumerate}[(i)]
@@ -191,7 +193,7 @@ Let $\iu = \sqrt{-1}$, $o(\cdot)$ and $O(\cdot)$ are little-o and big-O notation
     The movie is showed in \texttt{q2-2.mp4}.
 
     \item The energy of the ground state calculated by (Sine-)DVR (spanned on $[-20,\ 20]$ using 1024 basis) is 
-    0.49218750 a.\,u., while imaginary time propagation SO (using grid basis spanned on $[-20,\ 20]$ with 4096 grid points) gives 0.49242469 a.\,u..
+    0.49218750 a.\,u., while imaginary time propagation SO (using grid basis spanned on $[-20,\ 20]$ with 4096 grid points, time step is $-0.1\iu$) gives 0.49242469 a.\,u..
     The wavefunction of the ground state is plotted in Figure~\ref{fig:2-3}.
     \begin{figure}[H]
       \centering
@@ -204,9 +206,120 @@ Let $\iu = \sqrt{-1}$, $o(\cdot)$ and $O(\cdot)$ are little-o and big-O notation
   \end{enumerate}
 
   \item \begin{enumerate}[(i)]
-    \item 1
-    \item 2
-    \item 3
+    \item Note that $\hat{V}$ matrix is hermitian. Let
+    \begin{align*}
+      \det\qty(\lambda - \hat{V}) = \det\qty(\lambda - \mqty(V_1 & V_{12} \\ V_{21} & V_2)) = 0,
+    \end{align*}
+    that is, \begin{align*}
+      \lambda^2 - (V_1 + V_2) \lambda + V_1 V_2 - \abs{V_{21}}^2 = 0,
+    \end{align*}
+    \begin{align*}
+      \lambda = \frac{(V_1 + V_2) \pm \sqrt{(V_1 + V_2)^2 - 4V_1 V_2 + 4\abs{V_{21}}^2 }}{2}.
+    \end{align*}
+    Hence, $\lambda_1 = \frac{1}{2}\qty((V_1 + V_2) + \sqrt{D})$, $\lambda_2 = \frac{1}{2}\qty((V_1 + V_2) - \sqrt{D})$, 
+    where $D = 4\abs{V_{21}}^2 + (V_1 - V_2)^2$. Therefore, there are unitary transformation $\hat{U}$ such that
+    \begin{align*}
+      \hat{V} = \mqty(V_1 & V_{12} \\ V_{21} & V_2) = \frac{1}{2} \hat{U}\mqty((V_1 + V_2) + \sqrt{D} & \\ &(V_1 + V_2) - \sqrt{D}) \hat{U}^{\dagger}.
+    \end{align*}
+    Hence,
+    \begin{align*}
+      \exp\qty[-\frac{\iu\Delta t}{\hbar} \mqty(V_1 & V_{12} \\ V_{21} & V_2)] 
+      =&\ \hat{U} \mqty(\exp\qty[-\frac{\iu\Delta t}{2\hbar} \qty((V_1 + V_2) + \sqrt{D})] & \\ & \exp\qty[-\frac{\iu\Delta t}{2\hbar} \qty((V_1 + V_2) - \sqrt{D})]) \hat{U}^{\dagger} \\
+      =&\ \exp\qty[-\frac{\iu\Delta t}{2\hbar}\qty(V_1 + V_2)] \hat{U} \mqty(\exp\qty[-\frac{\iu\Delta t}{2\hbar} \sqrt{D}] & \\ & \exp\qty[\frac{\iu\Delta t}{2\hbar} \sqrt{D}]) \hat{U}^{\dagger}.
+    \end{align*}
+    Let $\theta = \frac{\Delta t}{2\hbar} \sqrt{D}$, then
+    \begin{align*}
+      \exp\qty[-\frac{\iu\Delta t}{\hbar} \mqty(V_1 & V_{12} \\ V_{21} & V_2)] 
+      =& \ \exp\qty[-\frac{\iu\Delta t}{2\hbar}\qty(V_1 + V_2)] \hat{U} \mqty(\cos\theta - \iu\sin\theta & \\ & \cos\theta + \iu\sin\theta) U^{\dagger} \\
+      =& \ \exp\qty[-\frac{\iu\Delta t}{2\hbar}\qty(V_1 + V_2)]\qty[
+        \cos\theta + \iu \sin\theta \qty(u_2u_2^\dagger - u_1u_1^\dagger)
+      ],
+    \end{align*}
+    where
+    \begin{align*}
+      \mqty(V_1 & V_{12} \\ V_{21} & V_2)u_i = \lambda_i u_i \qc i = 1,\ 2.
+    \end{align*}
+    When $i = 1$, solve the null space of $\lambda_1 - \hat{V}$ we have
+    the unnormalized $\tilde{u}_1 = (V_1 - V_2 + \sqrt{D},\ 2V_{21})^{\mathsf{T}}$, and hence,
+    \begin{align*}
+      u_1u_1^\dagger = \frac{\tilde{u}_1\tilde{u}_1^\dagger}{\tilde{u}_1^\dagger\tilde{u}_1}
+      = \frac{1}{2\sqrt{D}(V_1 - V_2 + \sqrt{D})}
+      \mqty(
+        (V_1 - V_2)^2 + 2\sqrt{D}(V_1 - V_2) & 2V_{12}\qty(V_1 - V_2 + \sqrt{D}) \\
+        2V_{21}\qty(V_1 - V_2 + \sqrt{D}) & 4\abs{V_{12}}^2 
+      ).
+    \end{align*}
+    Similarly, $\tilde{u}_2 = (-2V_{12},\ V_1 - V_2 + \sqrt{D})^{\mathsf{T}}$, and
+    \begin{align*}
+      u_2u_2^\dagger
+      = \frac{1}{2\sqrt{D}(V_1 - V_2 + \sqrt{D})}
+      \mqty(
+        4\abs{V_{12}}^2 & -2V_{12}\qty(V_1 - V_2 + \sqrt{D}) \\
+        -2V_{21}\qty(V_1 - V_2 + \sqrt{D}) & (V_1 - V_2)^2 + 2\sqrt{D}(V_1 - V_2) 
+      ).
+    \end{align*}
+    Hence,
+    \begin{align*}
+      \exp\qty[-\frac{\iu\Delta t}{\hbar} \mqty(V_1 & V_{12} \\ V_{21} & V_2)] 
+      =&\ \exp\qty[-\frac{\iu\Delta t}{2\hbar}\qty(V_1 + V_2)]\qty[
+        \cos\theta + \iu \sin\theta \qty(u_2u_2^\dagger - u_1u_1^\dagger)
+      ] \\
+      =&\ \exp\qty[-\frac{\iu\Delta t}{2\hbar}\qty(V_1 + V_2)]\Biggl[
+        \cos\theta
+        + \iu \frac{\sin\theta}{2\sqrt{D}(V_1 - V_2 + \sqrt{D})} \cdot\\
+        &\mqty(
+          4\abs{V_{12}}^2 - (V_1 - V_2)^2 - 2\sqrt{D}(V_1 - V_2)  & -4V_{12}\qty(V_1 - V_2 + \sqrt{D}) \\
+          -4V_{21}\qty(V_1 - V_2 + \sqrt{D}) & (V_1 - V_2)^2 + 2\sqrt{D}(V_1 - V_2) - 4\abs{V_{12}}^2
+        )
+      \Biggl] \\
+      =&\ \exp\qty[-\frac{\iu\Delta t}{2\hbar}\qty(V_1 + V_2)]\qty[
+        \cos\theta
+        + \iu\frac{\sin\theta}{\sqrt{D}} \mqty(
+          V_2 - V_1 & -2V_{12} \\
+          -2V_{21} & V_1 - V_2
+        )
+      ].
+    \end{align*}
+    \item Use 1024 grid points, other parameters are the given values in the Problem Set.
+    Results plotted in Figure~\ref{fig:3-2}.
+    The movie is showed in \texttt{q3-2.mp4}.
+
+    \begin{figure}[H]
+      \centering
+      \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q3-2_time_s12.pdf}
+      \end{minipage}
+      \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q3-2_time_energy.pdf}
+      \end{minipage}
+      \caption{}
+      \label{fig:3-2}
+    \end{figure}
+
+    The wavepacket on $\ket{2}$ gradually moves to the minimum points of the potential surface of $\ket{2}$ and then hops back to $\ket{1}$.
+
+    \item Use 1024 grid points, other parameters are the given values in the Problem Set.
+    Results plotted in Figure~\ref{fig:3-3}.
+    The movie is showed in \texttt{q3-3.mp4}.
+
+    \begin{figure}[H]
+      \centering
+      \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q3-3_time_s12.pdf}
+      \end{minipage}
+      \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{q3-3_time_energy.pdf}
+      \end{minipage}
+      \caption{}
+      \label{fig:3-3}
+    \end{figure}
+    The movie is showed in \texttt{q3-2.mp4}.
+
+    The wavepacket on $\ket{1}$ is vertically excited to $\ket{2}$ as the laser activate, and then gradually moves to the minimum points of the potential surface of $\ket{2}$ and hops back to $\ket{1}$.
   \end{enumerate}
 \end{enumerate}
 

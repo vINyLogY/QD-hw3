@@ -45,7 +45,7 @@ def q1_2(npts):
     p = p_basis.inner_product(psi_p, op(lambda x: x)(psi_p))
     p2 = p_basis.inner_product(psi_p, op(lambda x: x**2)(psi_p))
     delta_p = np.sqrt(p2 - p**2)
-    print('[N] Norm: {:.8f}; <p>: {:.8f}; Delta p: {:.8f}'.format(
+    print('[N] Norm: {:.14f}; <p>: {:.14f}; Delta p: {:.14f}'.format(
         norm, p, delta_p))
     print('[A] Norm: 1; <p>: 0; Delta p: {:.8f}'.format(1.0 / np.sqrt(2)))
 
@@ -77,7 +77,7 @@ def q1_3(npts):
 
 def main():
     npts = 1024
-    q1_1(npts)
+    #q1_1(npts)
     q1_2(npts)
     q1_3(npts)
     return
