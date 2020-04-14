@@ -45,11 +45,18 @@ def q2_1(npts, max_iter=1000):
         energy = 0.5 * p2 + 0.5 * x2
         print('Energy: {:.8f}'.format(energy))
         zipped.append((t, x, p, energy))
-        plt.plot(basis(), basis(wfn).real, '-', label='Re')
-        plt.plot(basis(), basis(wfn).imag, '--', label="Im")
-        plt.xlim(-20, 20)
-        plt.ylim(-1, 1)
-        plt.legend()
+
+        _, ax1 = plt.subplots()
+        ax1.plot(basis(), np.abs(basis(wfn))**2)
+        ax1.set_ylabel('Probability Density')
+        ax1.set_ylim(0, 1)
+        ax1.set_xlim(-10, 10)
+        ax1.set_xlabel('Position')
+        ax2 = ax1.twinx()
+        ax2.plot(basis(), basis(v_func), '--', c='grey')
+        ax2.set_ylim(0, 25)
+        ax2.set_ylabel('Potential')
+
         plt.savefig('q2-1/wfn{:08.0f}.png'.format(t / dt), dpi=300)
         plt.close()
     np.savetxt('q2-1.txt', np.array(zipped),
@@ -95,11 +102,18 @@ def q2_2(npts, max_iter=1000):
         energy = kinetic + potential
         print('Energy: {:.8f}'.format(energy))
         zipped.append((t, x, p, energy))
-        plt.plot(basis(), basis(wfn).real, '-', label='Re')
-        plt.plot(basis(), basis(wfn).imag, '--', label="Im")
-        plt.xlim(-20, 20)
-        plt.ylim(-1, 1)
-        plt.legend()
+
+        _, ax1 = plt.subplots()
+        ax1.plot(basis(), np.abs(basis(wfn))**2)
+        ax1.set_ylabel('Probability Density')
+        ax1.set_ylim(0, 1)
+        ax1.set_xlim(-5, 5)
+        ax1.set_xlabel('Position')
+        ax2 = ax1.twinx()
+        ax2.plot(basis(), basis(v_func), '--', c='grey')
+        ax2.set_ylabel('Potential')
+        ax2.set_ylim(0, 5)
+
         plt.savefig('q2-2/wfn{:08.0f}.png'.format(t / dt), dpi=300)
         plt.close()
     np.savetxt('q2-2.txt', np.array(zipped),
@@ -124,21 +138,12 @@ def q2_3(npts, max_iter=1000, err=1.0e-14):
         print('Time: {:.2f}; Norm: {:.8f}; Energy: {:.8f}'.format(
             t, norm, energy))
 
-        plt.plot(basis(), basis(wfn).real, '-', label='Re')
-        plt.plot(basis(), basis(wfn).imag, '--', label="Im")
-        plt.xlim(-20, 20)
-        plt.ylim(-1, 1)
-        plt.legend()
-        plt.savefig('q2-3/wfn{:08.0f}.png'.format(np.abs(t / dt)), dpi=300)
-        plt.close()
         if prev_energy and np.allclose(prev_energy, energy, atol=err, rtol=err):
             break
         else:
             prev_energy = energy
-    
+
     print('SO Energy: {:.8f}'.format(energy))
-    zipped = np.array((basis(), basis(propergator.wfn)))
-    np.savetxt('q2-3.txt', zipped)
     return
 
 
@@ -149,10 +154,10 @@ def q2_3dvr(npts):
     solver.set_v_func(v_func)
     energy, v = solver.solve(n_state=1)
     print('DVR Energy: {:.8f}'.format(energy[0]))
-    
+
     dvr_wfn = solver.dvr2cont(v[0])
     basis, wfn = np.loadtxt('q2-3.txt', dtype=DTYPE)
-    
+
     xspace = np.linspace(-20, 20, num=101)
     plt.plot(xspace, dvr_wfn(xspace).real, '.', label='DVR Re')
     plt.plot(xspace, dvr_wfn(xspace).imag, '.', label='DVR Im')
@@ -182,11 +187,17 @@ def q2_4(npts, max_iter=1000):
     for t, wfn in propergator(dt=dt, max_iter=max_iter, renormalize=True):
         norm = propergator.renormalization_coeff
         print('Time: {:.2f}; Norm: {:.8f}'.format(t, norm))
-        plt.plot(basis(), norm * basis(wfn).real, '-', label='Re')
-        plt.plot(basis(), norm * basis(wfn).imag, '--', label="Im")
-        plt.xlim(-20, 20)
-        plt.ylim(-1, 1)
-        plt.legend()
+
+        _, ax1 = plt.subplots()
+        ax1.plot(basis(), np.abs(norm * basis(wfn))**2)
+        ax1.set_ylabel('Probability Density')
+        ax1.set_ylim(0, 1)
+        ax1.set_xlabel('Position')
+        ax2 = ax1.twinx()
+        ax2.plot(basis(), basis(v_func), '--', c='grey')
+        ax2.set_ylabel('Potential')
+        ax2.set_ylim(0, 4)
+
         plt.savefig('q2-4/wfn{:08.0f}.png'.format(t / dt), dpi=300)
         plt.close()
     return
@@ -231,19 +242,19 @@ def plotter(fname, x_range, p_range, e_range, ref=None):
 
 def main():
     npts = 2 ** 12
-    ## 2-1
-    # q2_1(npts)
+    # 2-1
+    #q2_1(npts)
     # plotter('q2-1.txt', (-3, 3), (-3, 3), (3.61, 3.63), ref=q2_1a())
 
-    ## 2-2
+    # 2-2
     # q2_2(npts)
     # plotter('q2-2.txt', (-0.25, 0.75), (-0.5, 0.5), (0.53, 0.55))
 
-    ## 2-3
-    #q2_3(npts)
-    #q2_3dvr(1024)
+    # 2-3
+    # q2_3(npts)
+    # q2_3dvr(1024)
 
-    ## 2-4
+    # 2-4
     q2_4(npts)
 
     return

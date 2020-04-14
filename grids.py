@@ -195,57 +195,7 @@ class Propagator(object):
         self.renormalization_coeff = 1.0
         return
 
-    def __call__(self, high_order=True, **kwargs):
-            if high_order:
-                return self.propagator(**kwargs)
-            else:
-                return self.propagator_dense(**kwargs)
-
-    def propagator_dense(self, t0=0, dt=0.1, max_iter=1000, renormalize=False, sample_rate=10):
-        # Assume basis is instace of Coordinate,
-        # but codes are identical with Momentum.
-        # This method runs on array-level.
-        fft = self.basis.ft
-        ifft = self.basis.conj.ft
-        v = partial(self.func, x=self.basis())
-        t = partial(self.conj_func, p=self.basis.conj())
-
-        vec = np.array(self.basis(self.wfn))
-        one_dim = (vec.ndim == 1)
-        vec = np.reshape(vec, (self.n_state, -1))
-        yield (t0, self.wfn)
-        for i in range(max_iter):
-            time = t0 + i * dt
-            vec = self._vec_prop(dt / 2.0, with_time(v, time)(), vec)
-            vec = fft(vec)
-            vec = self._vec_prop(dt, with_time(t, time)(), vec)
-            vec = ifft(vec)
-            vec = self._vec_prop(dt / 2.0, with_time(v, time)(), vec)
-            if (i + 1) % sample_rate == 0:
-                y = vec[0] if one_dim else vec
-                self.wfn = interpolate.interp1d(self.basis(), y)
-                if renormalize:
-                    self.normalize()
-                    vec = np.reshape(self.basis(self.wfn), (self.n_state, -1))
-                yield (time + dt, self.wfn)
-
-    def _vec_prop(self, tau, matrices, vecs):
-        # move Coordinate/Momentum to the first axis.
-        hbar = self.basis.hbar
-        vecs = np.transpose(vecs)
-        matrices = np.reshape(matrices, (self.n_state, self.n_state, -1))
-        matrices = np.moveaxis(matrices, -1, 0)
-
-        # Diagonalization
-        dagger = lambda x: np.conj(np.transpose(x))
-        ans = [np.dot(v, (np.exp(-1.0j * w * tau / hbar) * np.dot(dagger(v), vec)))
-               for vec, (w, v) in zip(vecs, map(linalg.eigh, matrices))]
-
-        # move Coordinate/Momentum back.
-        ans = np.transpose(ans)
-        return ans
-
-    def propagator(self, t0=0, dt=0.1, max_iter=1000, renormalize=False):
+    def __call__(self, t0=0, dt=0.1, max_iter=1000, renormalize=False):
         # Assume basis is instace of Coordinate,
         # but codes are identical with Momentum.
         # This method runs on function-level.

@@ -65,8 +65,6 @@ def s12a(wfn):
 
 def s12b(wfn):
     chi1, chi2 = basis(wfn)
-    chi1 = chi1 / basis.norm(chi1)
-    chi2 = chi2 / basis.norm(chi2)
     return np.abs(basis.inner_product(chi1, chi2))**2
 
 
@@ -84,7 +82,7 @@ def q3_2():
     propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = 0.1
     zipped = []
-    for t, wfn in propergator(dt=dt, max_iter=1000, renormalize=True, high_order=True):
+    for t, wfn in propergator(dt=dt, max_iter=1000, renormalize=True):
         potential = basis.inner_product(wfn, op(v_func)(wfn))
         wfn_p = basis.ft(wfn)
         kinetic = basis.conj.inner_product(wfn_p, op(t_func)(wfn_p))
@@ -97,20 +95,30 @@ def q3_2():
         psi1, psi2 = basis(wfn)
 
         fig = plt.figure()
-        ax2 = fig.add_axes([0.1, 0.5, 0.8, 0.4],
-                           xticklabels=[], ylim=(-1.2, 1.2))
-        ax1 = fig.add_axes([0.1, 0.1, 0.8, 0.4],
-                           ylim=(-1.2, 1.2))
+        ax2 = fig.add_axes([0.1, 0.52, 0.8, 0.4],
+                           xticklabels=[], ylim=(0, 1))
+        ax1 = fig.add_axes([0.1, 0.08, 0.8, 0.4],
+                           ylim=(0, 1))
 
-        ax1.plot(basis(), psi1.real, '-', label='1, Re')
-        ax1.plot(basis(), psi1.imag, '--', label="1, Im")
+        ax1.plot(basis(), np.abs(psi1)**2, '-', label='1', c='b')
+        ax1.set_ylabel('Probability Density')
+        ax1.set_xlabel('Position')
+        ax11 = ax1.twinx()
+        ax11.plot(basis(), basis(v1), '--', c='grey')
+        ax11.set_ylabel('Potential')
+        ax11.set_ylim(0, 5)
         ax1.legend()
-        ax2.plot(basis(), psi2.real, '-', label='2, Re')
-        ax2.plot(basis(), psi2.imag, '--', label="2, Im")
+
+        ax2.plot(basis(), np.abs(psi2)**2, '-', label='2', c='y')
+        ax2.set_ylabel('Probability Density')
+        ax22 = ax2.twinx()
+        ax22.plot(basis(), basis(v2), '--', c='grey')
+        ax22.set_ylabel('Potential')
+        ax22.set_ylim(0, 5)
         ax2.legend()
+
         plt.savefig('q3-2/wfn{:08.0f}.png'.format(t / dt), dpi=300)
         plt.close()
-
     np.savetxt('q3-2.txt', np.array(zipped), header='Time S_12(a) S_12(b) Energy')
 
 
@@ -127,7 +135,7 @@ def q3_3():
     propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = 0.1
     zipped = []
-    for t, wfn in propergator(dt=dt, max_iter=1000, renormalize=True, high_order=True):
+    for t, wfn in propergator(dt=dt, max_iter=1000, renormalize=True):
         potential = basis.inner_product(wfn, op(v_func)(wfn))
         wfn_p = basis.ft(wfn)
         kinetic = basis.conj.inner_product(wfn_p, op(t_func)(wfn_p))
@@ -140,20 +148,30 @@ def q3_3():
         psi1, psi2 = basis(wfn)
 
         fig = plt.figure()
-        ax2 = fig.add_axes([0.1, 0.5, 0.8, 0.4],
-                           xticklabels=[], ylim=(-1.2, 1.2))
-        ax1 = fig.add_axes([0.1, 0.1, 0.8, 0.4],
-                           ylim=(-1.2, 1.2))
+        ax2 = fig.add_axes([0.1, 0.52, 0.8, 0.4],
+                           xticklabels=[], ylim=(0, 1))
+        ax1 = fig.add_axes([0.1, 0.08, 0.8, 0.4],
+                           ylim=(0, 1))
 
-        ax1.plot(basis(), psi1.real, '-', label='1, Re')
-        ax1.plot(basis(), psi1.imag, '--', label="1, Im")
+        ax1.plot(basis(), np.abs(psi1)**2, '-', label='1', c='b')
+        ax1.set_ylabel('Probability Density')
+        ax1.set_xlabel('Position')
+        ax11 = ax1.twinx()
+        ax11.plot(basis(), basis(v1), '--', c='grey')
+        ax11.set_ylabel('Potential')
+        ax11.set_ylim(0, 5)
         ax1.legend()
-        ax2.plot(basis(), psi2.real, '-', label='2, Re')
-        ax2.plot(basis(), psi2.imag, '--', label="2, Im")
+
+        ax2.plot(basis(), np.abs(psi2)**2, '-', label='2', c='y')
+        ax2.set_ylabel('Probability Density')
+        ax22 = ax2.twinx()
+        ax22.plot(basis(), basis(v2), '--', c='grey')
+        ax22.set_ylabel('Potential')
+        ax22.set_ylim(0, 5)
         ax2.legend()
+
         plt.savefig('q3-3/wfn{:08.0f}.png'.format(t / dt), dpi=300)
         plt.close()
-
     np.savetxt('q3-3.txt', np.array(zipped), header='Time S_12(a) S_12(b) Energy')
 
 
@@ -185,9 +203,9 @@ def plotter(fname):
 
 def main():
     q3_2()
-    plotter('q3-2.txt')
+    # plotter('q3-2.txt')
     q3_3()
-    plotter('q3-3.txt')
+    # plotter('q3-3.txt')
 
 
 if __name__ == '__main__':
