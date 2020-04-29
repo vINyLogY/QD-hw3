@@ -69,7 +69,7 @@ def s12b(wfn):
 
 
 
-def q3_2():
+def q3_2(max_iter=10000):
     chi = gaussian_wfn(x0=x1)
     def v12(x): return lambda0 * np.ones_like(x)
 
@@ -82,7 +82,7 @@ def q3_2():
     propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = 0.1
     zipped = []
-    for t, wfn in propergator(dt=dt, max_iter=1000, renormalize=True):
+    for t, wfn in propergator(dt=dt, max_iter=max_iter, renormalize=True):
         potential = basis.inner_product(wfn, op(v_func)(wfn))
         wfn_p = basis.ft(wfn)
         kinetic = basis.conj.inner_product(wfn_p, op(t_func)(wfn_p))
@@ -122,7 +122,7 @@ def q3_2():
     np.savetxt('q3-2.txt', np.array(zipped), header='Time S_12(a) S_12(b) Energy')
 
 
-def q3_3():
+def q3_3(max_iter=10000):
     chi = gaussian_wfn(x0=x1)
     def v12(x, t): return (lambda0 - e_mu(t)) * np.ones_like(x)
 
@@ -135,7 +135,7 @@ def q3_3():
     propergator = Propagator(init_wfn, basis, v_func, t_func)
     dt = 0.1
     zipped = []
-    for t, wfn in propergator(dt=dt, max_iter=1000, renormalize=True):
+    for t, wfn in propergator(dt=dt, max_iter=max_iter, renormalize=True):
         potential = basis.inner_product(wfn, op(v_func)(wfn))
         wfn_p = basis.ft(wfn)
         kinetic = basis.conj.inner_product(wfn_p, op(t_func)(wfn_p))
@@ -202,10 +202,11 @@ def plotter(fname):
 
 
 def main():
-    q3_2()
+    max_iter = 10000
+    # q3_2(max_iter)
     # plotter('q3-2.txt')
-    q3_3()
-    # plotter('q3-3.txt')
+    q3_3(max_iter)
+    plotter('q3-3.txt')
 
 
 if __name__ == '__main__':
